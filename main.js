@@ -5,7 +5,8 @@ const api = {
 }
 
 // get DOM
-const searchCity = document.getElementById("searchCityButton");
+const inputCity = document.getElementById("searchCity");
+const searchCityBtn = document.getElementById("searchCityBtn");
 let now;
 let realTimeDate = document.getElementById("date");
 let city = document.getElementById("city-name");
@@ -13,7 +14,7 @@ let weatherDescri = document.getElementById("weather-description");
 let weatherIcon = document.getElementById("weather-icon");
 let currentTemp = document.getElementById("current-temp");
 let feelsLike = document.getElementById("feelslike-temp");
-
+let currentLocalTime, getTimeEverySecond;
 
 // function for when you search a city
 const getResults = (city) => {
@@ -25,6 +26,11 @@ const getResults = (city) => {
         }
         res.json().then((cityData) => {
             // setInterval("createElements(cityData)", 1000);
+            currentLocalTime = (cityData.dt + cityData.timezone - (getDefaultTimezone(cityData))) * 1000;
+
+            getTimeEverySecond && clearInterval(getTimeEverySecond);
+            // Update the information every one second (because of the second)
+            getTimeEverySecond = setInterval(dateBuilder, 1000);
             createElements(cityData);
             console.log(cityData);
         })
@@ -33,13 +39,20 @@ const getResults = (city) => {
     })
 }
 
+// get a default time zone
+const getDefaultTimezone = (defTimeZone) => `${defTimeZone.timezone}`;
+
+// get a value typed in the input to pass it to the parameter of "getResults"
+const getInputValueAndShow = () => {
+    getResults(inputCity.value);
+}
 
 // Get current date from "new Date()" and build a date to be shown
 const dateBuilder = () => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-    now = new Date();
+    now = new Date(currentLocalTime);
     let day = days[now.getDay()];
     let date = now.getDate();
     let month = months[now.getMonth()];
@@ -53,12 +66,11 @@ const dateBuilder = () => {
         : (date === 3 || date === 23) ? `${day}, ${month}  ${date}rd, ${year} ${hour} : ${time} ${second}`
         : `${day}, ${month} ${date}th, ${year} ${hour}:${time} ${second}`
 
-    
-    // return `${day} ${date} ${month} ${year} ${hour} : ${time}`;
+    currentLocalTime = currentLocalTime + 1000;
+
 };
 
-// Update the information every one second (because of the second)
-setInterval(dateBuilder, 1000);
+
 
 // function to put 0 for an hour and time when they are single digits
 const makeDigitDouble = (num) => {
@@ -74,6 +86,7 @@ const createElements = (cityData) => {
     let iconCode = cityData.weather[0].icon;
     let iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
 
+    city.textContent = `${cityData.name}, ${cityData.sys.country}`;
     weatherDescri.innerHTML = cityData.weather[0].main;
     weatherIcon.innerHTML = `<img src="${iconUrl}" alt=""></img>`;
     
@@ -83,3 +96,6 @@ const createElements = (cityData) => {
 
 // when you visit the page
 window.addEventListener("load", getResults("Vancouver"));
+
+// when you search for a city and click the button
+window.searchCityBtn.addEventListener("click", getInputValueAndShow);
