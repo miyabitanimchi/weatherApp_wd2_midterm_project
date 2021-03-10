@@ -7,14 +7,13 @@ const api = {
 // get DOM
 const inputCity = document.getElementById("searchCity");
 const searchCityBtn = document.getElementById("searchCityBtn");
-let now;
-let realTimeDate = document.getElementById("date");
-let city = document.getElementById("city-name");
-let weatherDescri = document.getElementById("weather-description");
-let weatherIcon = document.getElementById("weather-icon");
-let currentTemp = document.getElementById("current-temp");
-let feelsLike = document.getElementById("feelslike-temp");
-let currentLocalTime, getTimeEverySecond;
+const realTimeDate = document.getElementById("date");
+const city = document.getElementById("city-name");
+const weatherDescri = document.getElementById("weather-description");
+const weatherIcon = document.getElementById("weather-icon");
+const currentTemp = document.getElementById("current-temp");
+const feelsLike = document.getElementById("feelslike-temp");
+let now, currentLocalTime, getTimeEverySecond;
 
 // function for when you search a city
 const getResults = (city) => {
@@ -26,13 +25,18 @@ const getResults = (city) => {
         }
         res.json().then((cityData) => {
             // setInterval("createElements(cityData)", 1000);
-            currentLocalTime = (cityData.dt + cityData.timezone - (getDefaultTimezone(cityData))) * 1000;
+            currentLocalTime = (cityData.dt + cityData.timezone - (-28800)) * 1000;
 
             getTimeEverySecond && clearInterval(getTimeEverySecond);
             // Update the information every one second (because of the second)
             getTimeEverySecond = setInterval(dateBuilder, 1000);
             createElements(cityData);
             console.log(cityData);
+
+            // When a city you typed is not found...
+            if (cityData.name != inputCity.value) {
+                alert(`Not found the city called "${inputCity.value}"`);
+            } 
         })
     }).catch((err) => {
         console.log(`error ${err}`);
@@ -40,13 +44,20 @@ const getResults = (city) => {
 }
 
 // get a default time zone
-const getDefaultTimezone = (defTimeZone) => `${defTimeZone.timezone}`;
+// const getDefaultTimezone = (defTimeZone) => `${defTimeZone.timezone}`;
 
 // get a value typed in the input to pass it to the parameter of "getResults"
-const getInputValueAndShow = () => {
+const getInputValueToShow = () => {
     getResults(inputCity.value);
 }
 
+// [for an enter key activated] get a value typed in the input to pass it to the parameter of "getResults"
+const getInputvalueWithEKey = (event) => {
+    if (event.keyCode == 13) {
+        getResults(inputCity.value);
+        console.log(inputCity.value);
+    } 
+}
 // Get current date from "new Date()" and build a date to be shown
 const dateBuilder = () => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -91,6 +102,7 @@ const createElements = (cityData) => {
     weatherIcon.innerHTML = `<img src="${iconUrl}" alt=""></img>`;
     
     currentTemp.innerHTML = `${Math.round(cityData.main.temp)}<span>℃</span>`;
+    feelsLike.innerHTML = `${Math.round(cityData.main.feels_like)}<span>℃</span>`;
 }
 
 
@@ -98,4 +110,6 @@ const createElements = (cityData) => {
 window.addEventListener("load", getResults("Vancouver"));
 
 // when you search for a city and click the button
-window.searchCityBtn.addEventListener("click", getInputValueAndShow);
+window.searchCityBtn.addEventListener("click", getInputValueToShow);
+// OR, when press an enter key
+inputCity.addEventListener("keypress", getInputvalueWithEKey);

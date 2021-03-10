@@ -9,19 +9,18 @@
 <body>
     <div id="app-wrap">
         <header>
-            <form>
-                <input type="text" id="searchCity" placeholder="Search for a city...">
-                <button id="searchCityBtn" type="button">See weather</button>
-            </form>
+            <input type="text" id="searchCity" placeholder="Search for a city..." value="Vancouver">
+            <button id="searchCityBtn" type="button">See weather</button>
         </header>
         <main>
+            <div>Local time: </div>
             <div id="date"></div>
             <div id="city-name"></div>
             <div id="weather-description"></div>
             <div id="weather-icon"></div>
             <div id="current-temp"><span id="celsius">℃</span><span id="fahrenheit">F</span></div>
             <div id="feelslike-container">
-                <p>Feel like <span id="feelslike-temp"></span><span id="celsius">℃</span><span id="fahrenheit">F</span></div></p>
+                <p>Feel like <span id="feelslike-temp"></span></p>
             </div>
             
         </main>
