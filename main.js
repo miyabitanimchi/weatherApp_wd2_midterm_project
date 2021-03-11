@@ -13,34 +13,46 @@ const weatherDescri = document.getElementById("weather-description");
 const weatherIcon = document.getElementById("weather-icon");
 const currentTemp = document.getElementById("current-temp");
 const feelsLike = document.getElementById("feelslike-temp");
+let cityValue;
+
+// Declaration for building current local time
 let now, currentLocalTime, getTimeEverySecond;
+
+
 
 // function for when you search a city
 const getResults = (city) => {
     fetch(`${api.base}weather?q=${city}&units=metric&appid=${api.key}`).then((res) => {
         console.log(res);
         if (res.status !== 200) {
-            alert(`We've got a problem. The status code: ${res.status} `);
+            alert(`Input a city's name precisely`);
             return;
         }
         res.json().then((cityData) => {
             // setInterval("createElements(cityData)", 1000);
             currentLocalTime = (cityData.dt + cityData.timezone - (-28800)) * 1000;
 
+            //  止めないと前のやつが動きっぱなしになるから
             getTimeEverySecond && clearInterval(getTimeEverySecond);
             // Update the information every one second (because of the second)
             getTimeEverySecond = setInterval(dateBuilder, 1000);
             createElements(cityData);
             console.log(cityData);
 
-            // When a city you typed is not found...
-            if (cityData.name != inputCity.value) {
-                alert(`Not found the city called "${inputCity.value}"`);
-            } 
         })
     }).catch((err) => {
         console.log(`error ${err}`);
     })
+}
+
+const ppp = setInterval(() => {
+    cityValue = inputCity.value;
+    getResults(cityValue);
+}, 120000);
+
+// function to make the first letter of the value input in the search box
+const firstLetterToUpperCase = () => {
+    inputCity.value.slice(0, 1).toUpperCase()
 }
 
 // get a default time zone
@@ -48,13 +60,13 @@ const getResults = (city) => {
 
 // get a value typed in the input to pass it to the parameter of "getResults"
 const getInputValueToShow = () => {
-    getResults(inputCity.value);
+    getResults(cityValue);
 }
 
 // [for an enter key activated] get a value typed in the input to pass it to the parameter of "getResults"
 const getInputvalueWithEKey = (event) => {
     if (event.keyCode == 13) {
-        getResults(inputCity.value);
+        getResults(cityValue);
         console.log(inputCity.value);
     } 
 }
@@ -108,7 +120,6 @@ const createElements = (cityData) => {
 
 // when you visit the page
 window.addEventListener("load", getResults("Vancouver"));
-
 // when you search for a city and click the button
 window.searchCityBtn.addEventListener("click", getInputValueToShow);
 // OR, when press an enter key
