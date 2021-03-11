@@ -4,5 +4,87 @@ html {
 
 body {
     margin: 0;
+    background-color: #FFF;
+    color: #000;
 }
 
+.darkmode {
+    background-color: #000;
+    color: #fff;
+}
+
+#container {
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    padding: 50px;
+}
+
+#searchCity {
+    width: 100%;
+    max-width: 280px;
+    padding: 10px 15px;
+    border: none;
+    outline: none;
+    background-color: rgba(242, 242, 242, 0.7);
+    border-radius: 10px;
+    border-bottom: 3px solid lightgray ;
+
+    color: #313131;
+    font-size: 20px;
+    font-weight: 300;
+    transition: .2s ease-out;
+
+}
+
+#searchCity:focus {
+    background-color:rgba(242, 242, 242, 0.9);
+}
+
+#searchCityBtn {
+    cursor: pointer;
+    margin-left: 5px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+#weather-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid gray;
+    border-radius: 30px;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.icon-image {
+    height: 150px;
+    width: 150px;
+}
+
+#btn-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#darkmodeBtn {
+    margin-top: 20px;
+}
+
+@media screen and (min-width: 650px) {
+    #weather-container {
+        margin-right: 150px;
+        margin-left: 150px;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    #weather-container {
+        margin-right: 300px;
+        margin-left: 300px;
+    }

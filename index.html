@@ -3,27 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
     <title>Weather Forecast</title>
 </head>
 <body>
-    <div id="app-wrap">
+    <div id="container">
         <header>
-            <input type="text" id="searchCity" placeholder="Search for a city..." value="Vancouver">
+            <input type="text" id="searchCity" placeholder="Search for a city...">
             <button id="searchCityBtn" type="button">See weather</button>
         </header>
-        <main>
+        <main id="weather-container">
             <div>Local time: </div>
             <div id="date"></div>
             <div id="city-name"></div>
             <div id="weather-description"></div>
             <div id="weather-icon"></div>
             <div id="current-temp"><span id="celsius">℃</span><span id="fahrenheit">F</span></div>
+            <div id="hilow-temp"></div>
             <div id="feelslike-container">
-                <p>Feel like <span id="feelslike-temp"></span></p>
+                <p>Feels like <span id="feelslike-temp"></span></p>
             </div>
-            
         </main>
+        <div id="btn-container">
+            <button id="darkmodeBtn" type="button"><i class="fas fa-moon"></i></button>
+        </div>
     </div>
     <script src="./main.js"></script>
 </body>

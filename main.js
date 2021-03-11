@@ -13,10 +13,13 @@ const weatherDescri = document.getElementById("weather-description");
 const weatherIcon = document.getElementById("weather-icon");
 const currentTemp = document.getElementById("current-temp");
 const feelsLike = document.getElementById("feelslike-temp");
+const hilowTemp = document.getElementById("hilow-temp");
+
+// For 2 min function
 let cityValue;
 
 // Declaration for building current local time
-let now, currentLocalTime, getTimeEverySecond;
+let now, currentLocalTime, getTimeEverySecond, defaultTimeZone;
 
 
 
@@ -25,7 +28,7 @@ const getResults = (city) => {
     fetch(`${api.base}weather?q=${city}&units=metric&appid=${api.key}`).then((res) => {
         console.log(res);
         if (res.status !== 200) {
-            alert(`Input a city's name precisely`);
+            alert(`Input a correct name of a city`);
             return;
         }
         res.json().then((cityData) => {
@@ -45,9 +48,13 @@ const getResults = (city) => {
     })
 }
 
-const ppp = setInterval(() => {
+let ppp = setInterval(() => {
     cityValue = inputCity.value;
-    getResults(cityValue);
+    if (cityValue === "") {
+        getResults("Vancouver");  // to try not to get the error 400 when the input box is empty
+    } else {
+        getResults(cityValue);
+    }
 }, 120000);
 
 // function to make the first letter of the value input in the search box
@@ -55,21 +62,11 @@ const firstLetterToUpperCase = () => {
     inputCity.value.slice(0, 1).toUpperCase()
 }
 
-// get a default time zone
-// const getDefaultTimezone = (defTimeZone) => `${defTimeZone.timezone}`;
 
-// get a value typed in the input to pass it to the parameter of "getResults"
-const getInputValueToShow = () => {
-    getResults(cityValue);
-}
+// get a default time zone not completed yet
 
-// [for an enter key activated] get a value typed in the input to pass it to the parameter of "getResults"
-const getInputvalueWithEKey = (event) => {
-    if (event.keyCode == 13) {
-        getResults(cityValue);
-        console.log(inputCity.value);
-    } 
-}
+
+
 // Get current date from "new Date()" and build a date to be shown
 const dateBuilder = () => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -85,8 +82,8 @@ const dateBuilder = () => {
     let second = makeDigitDouble(now.getSeconds());
 
     realTimeDate.textContent = (date === 1 || date === 21 || date === 31) ? `${day}, ${month} ${date}st, ${year} ${hour} : ${time} ${second}`
-        : (date === 2 || date === 22) ? `${day}, ${month}  ${date}nd, ${year} ${hour} : ${time} ${second}`
-        : (date === 3 || date === 23) ? `${day}, ${month}  ${date}rd, ${year} ${hour} : ${time} ${second}`
+        : (date === 2 || date === 22) ? `${day}, ${month}  ${date}nd, ${year} ${hour} : ${time} : ${second}`
+        : (date === 3 || date === 23) ? `${day}, ${month}  ${date}rd, ${year} ${hour} : ${time} : ${second}`
         : `${day}, ${month} ${date}th, ${year} ${hour}:${time} ${second}`
 
     currentLocalTime = currentLocalTime + 1000;
@@ -111,16 +108,34 @@ const createElements = (cityData) => {
 
     city.textContent = `${cityData.name}, ${cityData.sys.country}`;
     weatherDescri.innerHTML = cityData.weather[0].main;
-    weatherIcon.innerHTML = `<img src="${iconUrl}" alt=""></img>`;
+    weatherIcon.innerHTML = `<img class="icon-image" src="${iconUrl}" alt=""></img>`;
     
     currentTemp.innerHTML = `${Math.round(cityData.main.temp)}<span>℃</span>`;
     feelsLike.innerHTML = `${Math.round(cityData.main.feels_like)}<span>℃</span>`;
+    hilowTemp.innerText = `L: ${Math.round(cityData.main.temp_min)}℃ / H: ${Math.round(cityData.main.temp_max)}℃`;
 }
 
 
 // when you visit the page
 window.addEventListener("load", getResults("Vancouver"));
+
 // when you search for a city and click the button
-window.searchCityBtn.addEventListener("click", getInputValueToShow);
+window.searchCityBtn.addEventListener("click", () => {
+        nameItLater();
+});
 // OR, when press an enter key
-inputCity.addEventListener("keypress", getInputvalueWithEKey);
+inputCity.addEventListener("keypress", (event) => {
+    if (event.keyCode == 13) {
+        nameItLater();
+    } 
+});
+
+const nameItLater = async () => {
+    clearInterval(ppp);
+    cityValue = inputCity.value;
+    await getResults(cityValue);
+    ppp = setInterval(() => {
+        getResults(cityValue);
+    }, 120000);
+}
+
