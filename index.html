@@ -11,18 +11,19 @@
     <div id="container">
         <header>
             <input type="text" id="searchCity" placeholder="Search for a city...">
-            <button id="searchCityBtn" type="button">See weather</button>
+            <button id="searchCityBtn" type="button">Submit</button>
         </header>
-        <main id="weather-container">
-            <div>Local time: </div>
-            <div id="date"></div>
-            <div id="city-name"></div>
-            <div id="weather-description"></div>
-            <div id="weather-icon"></div>
-            <div id="current-temp"><span id="celsius">℃</span><span id="fahrenheit">F</span></div>
-            <div id="hilow-temp"></div>
-            <div id="feelslike-container">
-                <p>Feels like <span id="feelslike-temp"></span></p>
+        <main>
+            <div  id="weather-container">
+                <div class="localTimeTitle">- Local time -</div>
+                <div id="date"></div>
+                <div id="city-name"></div>
+                <div id="weather-description"></div>
+                <div id="weather-icon"></div>
+                <div><span id="current-temp"></span><span id="celcius">°C</span><span id="fahrenheit">°F</span></div>
+                <div id="hilow-temp"></div>
+                <div><span>Feels like </span><span id="feelslike-temp"></span><span id="celcius">°C</span><span id="fahrenheit">°F</span></div>
+                <button id="convertCF" type="button">°C</button><button id="convertCF" type="button">°F</button>
             </div>
         </main>
         <div id="btn-container">
@@ -30,6 +31,7 @@
         </div>
     </div>
     <script src="./main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js" type="text/javascript"></script>
 </body>
 </html>
 

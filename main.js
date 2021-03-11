@@ -32,6 +32,7 @@ const getResults = (city) => {
             return;
         }
         res.json().then((cityData) => {
+            defaultTimeZone = cityData.timezone;
             // setInterval("createElements(cityData)", 1000);
             currentLocalTime = (cityData.dt + cityData.timezone - (-28800)) * 1000;
 
@@ -57,12 +58,6 @@ let ppp = setInterval(() => {
     }
 }, 120000);
 
-// function to make the first letter of the value input in the search box
-const firstLetterToUpperCase = () => {
-    inputCity.value.slice(0, 1).toUpperCase()
-}
-
-
 // get a default time zone not completed yet
 
 
@@ -81,10 +76,13 @@ const dateBuilder = () => {
     let time = makeDigitDouble(now.getMinutes());
     let second = makeDigitDouble(now.getSeconds());
 
-    realTimeDate.textContent = (date === 1 || date === 21 || date === 31) ? `${day}, ${month} ${date}st, ${year} ${hour} : ${time} ${second}`
-        : (date === 2 || date === 22) ? `${day}, ${month}  ${date}nd, ${year} ${hour} : ${time} : ${second}`
-        : (date === 3 || date === 23) ? `${day}, ${month}  ${date}rd, ${year} ${hour} : ${time} : ${second}`
-        : `${day}, ${month} ${date}th, ${year} ${hour}:${time} ${second}`
+    // realTimeDate.textContent = (date === 1 || date === 21 || date === 31) ? `${day}, ${month} ${date}st, ${year} ${hour} : ${time} ${second}`
+    //     : (date === 2 || date === 22) ? `${day}, ${month}  ${date}nd, ${year} ${hour} : ${time} : ${second}`
+    //     : (date === 3 || date === 23) ? `${day}, ${month}  ${date}rd, ${year} ${hour} : ${time} : ${second}`
+    //     : `${day}, ${month} ${date}th, ${year} ${hour}:${time} ${second}`
+
+
+        realTimeDate.textContent = `${day}, ${month} ${date}, ${year} ${hour}:${time}:${second}`;
 
     currentLocalTime = currentLocalTime + 1000;
 
@@ -104,15 +102,14 @@ const createElements = (cityData) => {
     // createElements(cityData);
     // let now = new Date(cityData.dt * 1000);
     let iconCode = cityData.weather[0].icon;
-    let iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
-
+    let iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png";
     city.textContent = `${cityData.name}, ${cityData.sys.country}`;
     weatherDescri.innerHTML = cityData.weather[0].main;
     weatherIcon.innerHTML = `<img class="icon-image" src="${iconUrl}" alt=""></img>`;
     
-    currentTemp.innerHTML = `${Math.round(cityData.main.temp)}<span>℃</span>`;
-    feelsLike.innerHTML = `${Math.round(cityData.main.feels_like)}<span>℃</span>`;
-    hilowTemp.innerText = `L: ${Math.round(cityData.main.temp_min)}℃ / H: ${Math.round(cityData.main.temp_max)}℃`;
+    currentTemp.innerHTML = `${Math.round(cityData.main.temp)}`;
+    hilowTemp.innerHTML = `L: ${Math.round(cityData.main.temp_min)}<span id="celcius">℃</span><span id="fahrenheit">°F</span> / H: ${Math.round(cityData.main.temp_max)}<span id="celcius">℃</span><span id="fahrenheit">°F</span>`;
+    feelsLike.innerHTML = `${Math.round(cityData.main.feels_like)}`;
 }
 
 
@@ -130,6 +127,7 @@ inputCity.addEventListener("keypress", (event) => {
     } 
 });
 
+// function for the inside of the click and enter functions
 const nameItLater = async () => {
     clearInterval(ppp);
     cityValue = inputCity.value;

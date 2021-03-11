@@ -5,6 +5,7 @@ html {
 body {
     margin: 0;
     background-color: #FFF;
+    /* background: url(./img/Rain-5s-1084px.png); */
     color: #000;
 }
 
@@ -30,7 +31,7 @@ header {
     padding: 10px 15px;
     border: none;
     outline: none;
-    background-color: rgba(242, 242, 242, 0.7);
+    background-color: rgba(242, 242, 242, 0.6);
     border-radius: 10px;
     border-bottom: 3px solid lightgray ;
 
@@ -48,17 +49,45 @@ header {
 #searchCityBtn {
     cursor: pointer;
     margin-left: 5px;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.1rem;
 }
 
 #weather-container {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    border: 1px solid gray;
+    flex-direction: column;
+    border: 2px solid lightgray;
     border-radius: 30px;
     background-color: rgba(255, 255, 255, 0.7);
+    max-width: 400px;
+    padding: 10px;
+}
+
+.localTimeTitle {
+    font-size: 0.9rem;
+}
+
+#date {
+    font-size: 0.95rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+#city-name {
+    margin-top: 20px;
+}
+
+#weather-description {
+    font-weight: bold;
 }
 
 .icon-image {
@@ -88,3 +117,4 @@ header {
         margin-right: 300px;
         margin-left: 300px;
     }
+}
