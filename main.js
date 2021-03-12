@@ -13,7 +13,6 @@ const weatherDescri = document.getElementById("weather-description");
 const weatherIcon = document.getElementById("weather-icon");
 const currentTemp = document.getElementById("current-temp");
 const feelsLike = document.getElementById("feelslike-temp");
-const hilowTemp = document.getElementById("hilow-temp");
 const hiTemp = document.getElementById("hi-temp");
 const lowTemp = document.getElementById("low-temp");
 const convertToF = document.getElementById("convertToF");
@@ -26,8 +25,6 @@ let cityValue;
 
 // Declaration for building current local time
 let now, currentLocalTime, getTimeEverySecond, defaultTimeZone;
-
-
 
 // function for when you search a city
 const getResults = (city) => {
@@ -55,7 +52,7 @@ const getResults = (city) => {
     })
 }
 
-let ppp = setInterval(() => {
+let everyTwoMinUpdate = setInterval(() => {
     cityValue = inputCity.value;
     if (cityValue === "") {
         getResults("Vancouver");  // to try not to get the error 400 when the input box is empty
@@ -63,10 +60,6 @@ let ppp = setInterval(() => {
         getResults(cityValue);
     }
 }, 120000);
-
-// get a default time zone not completed yet
-
-
 
 // Get current date from "new Date()" and build a date to be shown
 const dateBuilder = () => {
@@ -82,13 +75,9 @@ const dateBuilder = () => {
     let time = makeDigitDouble(now.getMinutes());
     let second = makeDigitDouble(now.getSeconds());
 
-        realTimeDate.textContent = `${day}, ${month} ${date}, ${year} ${hour}:${time}:${second}`;
-
+    realTimeDate.textContent = `${day}, ${month} ${date}, ${year} ${hour}:${time}:${second}`;
     currentLocalTime = currentLocalTime + 1000;
-
 };
-
-
 
 // function to put 0 for an hour and time when they are single digits
 const makeDigitDouble = (num) => {
@@ -96,33 +85,29 @@ const makeDigitDouble = (num) => {
     return (num.length === 1) ? num = "0" + num : num;
 };
 
-
 // Create elements to show them on html
 const createElements = (cityData) => {
-    // createElements(cityData);
-    // let now = new Date(cityData.dt * 1000);
     let iconCode = cityData.weather[0].icon;
     let iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png";
     city.textContent = `${cityData.name}, ${cityData.sys.country}`;
     weatherDescri.innerHTML = cityData.weather[0].main;
     weatherIcon.innerHTML = `<img class="icon-image" src="${iconUrl}" alt=""></img>`;
     
-    showTempCelcius(cityData);
-
+    // When users prefer to have fahrenheit and keep it even after they search for another city's forecast
+    fahrenheit.forEach((val) => {
+        if(!val.classList.contains("hide-fahrenheit")) {
+            showTempFahrenheit(cityData);
+        } else {
+            showTempCelcius(cityData);
+        }
+    });
+    
+    //Convert C to F
     convertToF.addEventListener("click", () => {
-        currentTemp.innerHTML = `${Math.round((cityData.main.temp) * 1.8 + 32)}`;
-        hiTemp.innerHTML = `H: ${Math.round((cityData.main.temp_max) * 1.8 + 32)}`;
-        lowTemp.innerHTML = `L: ${Math.round((cityData.main.temp_min) * 1.8 + 32)}`;
-        feelsLike.innerHTML = `${Math.round((cityData.main.feels_like) * 1.8 + 32)}`;
-        celcius.forEach((val) => {
-            val.classList.add("hide-celcius");
-        });
-        fahrenheit.forEach((val) => {
-            val.classList.remove("hide-fahrenheit");
-        });
-
+        showTempFahrenheit(cityData);
     });
 
+    // Convert F to C
     convertToC.addEventListener("click", () => {
         fahrenheit.forEach((val) => {
             val.classList.add("hide-fahrenheit");
@@ -131,41 +116,74 @@ const createElements = (cityData) => {
     });
 }
 
+// function to show temperature with fahrenheit
+const showTempFahrenheit = (cityData) => {
+    currentTemp.innerHTML = `${Math.round((cityData.main.temp) * 1.8 + 32)}`;
+    hiTemp.innerHTML = `H: ${Math.round((cityData.main.temp_max) * 1.8 + 32)}`;
+    lowTemp.innerHTML = `L: ${Math.round((cityData.main.temp_min) * 1.8 + 32)}`;
+    feelsLike.innerHTML = `${Math.round((cityData.main.feels_like) * 1.8 + 32)}`;
+    celcius.forEach((val) => {
+        val.classList.add("hide-celcius");
+    });
+    fahrenheit.forEach((val) => {
+        val.classList.remove("hide-fahrenheit");
+    });
+}
 
-// function to show the temp with celcius
+// function to show temperature with celcius
 const showTempCelcius = (cityData) => {
     currentTemp.innerHTML = `${Math.round(cityData.main.temp)}`;
-    hiTemp.innerHTML = `L: ${Math.round(cityData.main.temp_min)}`;
-    lowTemp.innerHTML = `H: ${Math.round(cityData.main.temp_max)}`;
+    hiTemp.innerHTML = `H: ${Math.round(cityData.main.temp_max)}`;
+    lowTemp.innerHTML = `L: ${Math.round(cityData.main.temp_min)}`;
     feelsLike.innerHTML = `${Math.round(cityData.main.feels_like)}`;
     celcius.forEach((val) => {
         val.classList.remove("hide-celcius");
     })
 }
 
-// when you visit the page
-window.addEventListener("load", getResults("Vancouver"));
-
 // when you search for a city and click the button
 window.searchCityBtn.addEventListener("click", () => {
-        nameItLater();
+        getAnotherCityInfo();
 });
 // OR, when press an enter key
 inputCity.addEventListener("keypress", (event) => {
     if (event.keyCode == 13) {
-        nameItLater();
+        getAnotherCityInfo();
     } 
 });
 
 // function for the inside of the click and enter functions
-const nameItLater = async () => {
-    clearInterval(ppp);
+const getAnotherCityInfo = async () => {
+    clearInterval(everyTwoMinUpdate);
     cityValue = inputCity.value;
     await getResults(cityValue);
-    ppp = setInterval(() => {
+    everyTwoMinUpdate = setInterval(() => {
         getResults(cityValue);
     }, 120000);
 }
 
+// Function to execute dark mode
+toggleDarkmode = () => {
+    document.body.classList.toggle("darkmode");
+    localStorage.setItem("darkmodeOn", document.body.checked);
+}
 
+// when you visit the page
+window.addEventListener("load", () => {
+    getResults("Vancouver")
+    // if (localStorage.getItem("darkmodeOn")=== true) {
+    //     document.body.classList.add("darkmode");
+    // }
+    });
+    
+
+// Storage dark mode
+// const storageDarkmode = () => {
+//     localStorage.setItem("darkmodeOn", true);
+//     if (localStorage.getItem("darkmodeOn") === 'true') {
+//         document.body.classList.add("darkmode");
+//     } 
+// }
+
+// storageDarkmode();
 

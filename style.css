@@ -10,8 +10,9 @@ body {
 }
 
 .darkmode {
+    transition: 0.3s;
     background-color: #000;
-    color: #fff;
+    color: white;
 }
 
 #container {
@@ -34,12 +35,13 @@ header {
     background-color: rgba(242, 242, 242, 0.6);
     border-radius: 10px;
     border-bottom: 3px solid lightgray ;
-
-    color: #313131;
     font-size: 20px;
     font-weight: 300;
     transition: .2s ease-out;
+}
 
+::placeholder {
+    color: lightgray;
 }
 
 #searchCity:focus {
@@ -67,7 +69,7 @@ main {
     flex-direction: column;
     border: 2px solid lightgray;
     border-radius: 30px;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.5);
     max-width: 400px;
     padding: 10px;
 }
