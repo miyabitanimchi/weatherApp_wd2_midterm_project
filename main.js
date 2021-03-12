@@ -14,6 +14,12 @@ const weatherIcon = document.getElementById("weather-icon");
 const currentTemp = document.getElementById("current-temp");
 const feelsLike = document.getElementById("feelslike-temp");
 const hilowTemp = document.getElementById("hilow-temp");
+const hiTemp = document.getElementById("hi-temp");
+const lowTemp = document.getElementById("low-temp");
+const convertToF = document.getElementById("convertToF");
+const convertToC = document.getElementById("convertToC");
+const celcius = document.querySelectorAll(".hide-celcius");
+const fahrenheit = document.querySelectorAll(".hide-fahrenheit");
 
 // For 2 min function
 let cityValue;
@@ -76,12 +82,6 @@ const dateBuilder = () => {
     let time = makeDigitDouble(now.getMinutes());
     let second = makeDigitDouble(now.getSeconds());
 
-    // realTimeDate.textContent = (date === 1 || date === 21 || date === 31) ? `${day}, ${month} ${date}st, ${year} ${hour} : ${time} ${second}`
-    //     : (date === 2 || date === 22) ? `${day}, ${month}  ${date}nd, ${year} ${hour} : ${time} : ${second}`
-    //     : (date === 3 || date === 23) ? `${day}, ${month}  ${date}rd, ${year} ${hour} : ${time} : ${second}`
-    //     : `${day}, ${month} ${date}th, ${year} ${hour}:${time} ${second}`
-
-
         realTimeDate.textContent = `${day}, ${month} ${date}, ${year} ${hour}:${time}:${second}`;
 
     currentLocalTime = currentLocalTime + 1000;
@@ -107,11 +107,41 @@ const createElements = (cityData) => {
     weatherDescri.innerHTML = cityData.weather[0].main;
     weatherIcon.innerHTML = `<img class="icon-image" src="${iconUrl}" alt=""></img>`;
     
-    currentTemp.innerHTML = `${Math.round(cityData.main.temp)}`;
-    hilowTemp.innerHTML = `L: ${Math.round(cityData.main.temp_min)}<span id="celcius">℃</span><span id="fahrenheit">°F</span> / H: ${Math.round(cityData.main.temp_max)}<span id="celcius">℃</span><span id="fahrenheit">°F</span>`;
-    feelsLike.innerHTML = `${Math.round(cityData.main.feels_like)}`;
+    showTempCelcius(cityData);
+
+    convertToF.addEventListener("click", () => {
+        currentTemp.innerHTML = `${Math.round((cityData.main.temp) * 1.8 + 32)}`;
+        hiTemp.innerHTML = `H: ${Math.round((cityData.main.temp_max) * 1.8 + 32)}`;
+        lowTemp.innerHTML = `L: ${Math.round((cityData.main.temp_min) * 1.8 + 32)}`;
+        feelsLike.innerHTML = `${Math.round((cityData.main.feels_like) * 1.8 + 32)}`;
+        celcius.forEach((val) => {
+            val.classList.add("hide-celcius");
+        });
+        fahrenheit.forEach((val) => {
+            val.classList.remove("hide-fahrenheit");
+        });
+
+    });
+
+    convertToC.addEventListener("click", () => {
+        fahrenheit.forEach((val) => {
+            val.classList.add("hide-fahrenheit");
+        });
+        showTempCelcius(cityData);
+    });
 }
 
+
+// function to show the temp with celcius
+const showTempCelcius = (cityData) => {
+    currentTemp.innerHTML = `${Math.round(cityData.main.temp)}`;
+    hiTemp.innerHTML = `L: ${Math.round(cityData.main.temp_min)}`;
+    lowTemp.innerHTML = `H: ${Math.round(cityData.main.temp_max)}`;
+    feelsLike.innerHTML = `${Math.round(cityData.main.feels_like)}`;
+    celcius.forEach((val) => {
+        val.classList.remove("hide-celcius");
+    })
+}
 
 // when you visit the page
 window.addEventListener("load", getResults("Vancouver"));
@@ -136,4 +166,6 @@ const nameItLater = async () => {
         getResults(cityValue);
     }, 120000);
 }
+
+
 

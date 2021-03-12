@@ -97,6 +97,18 @@ main {
 
 #btn-container {
     display: flex;
+}
+
+.hide-celcius {
+    display: none;
+}
+
+.hide-fahrenheit {
+    display: none;
+}
+
+#btn-container {
+    display: flex;
     flex-direction: column;
     align-items: center;
 }

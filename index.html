@@ -20,10 +20,17 @@
                 <div id="city-name"></div>
                 <div id="weather-description"></div>
                 <div id="weather-icon"></div>
-                <div><span id="current-temp"></span><span id="celcius">°C</span><span id="fahrenheit">°F</span></div>
-                <div id="hilow-temp"></div>
-                <div><span>Feels like </span><span id="feelslike-temp"></span><span id="celcius">°C</span><span id="fahrenheit">°F</span></div>
-                <button id="convertCF" type="button">°C</button><button id="convertCF" type="button">°F</button>
+                <div><span id="current-temp"></span><span class="hide-celcius">°C</span><span class="hide-fahrenheit">°F</span></div>
+                <div id="hilow-temp">
+                    <span id="hi-temp"></span><span class="hide-celcius">°C</span><span class="hide-fahrenheit">°F</span><span> / </span><span id="low-temp"></span><span class="hide-celcius">°C</span><span class="hide-fahrenheit">°F</span>
+                </div>
+                <div>
+                    <span>Feels like </span><span id="feelslike-temp"></span><span class="hide-celcius">°C</span><span class="hide-fahrenheit">°F</span>
+                </div>
+                <div id="fcbtn-container">
+                    <button id="convertToF" type="button">°F</button>
+                    <button id="convertToC" type="button">°C</button>
+                </div>
             </div>
         </main>
         <div id="btn-container">
