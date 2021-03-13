@@ -6,28 +6,20 @@ const api = {
 
 // get DOM
 const inputCity = document.getElementById("searchCity");
-const searchCityBtn = document.getElementById("searchCityBtn");
-const realTimeDate = document.getElementById("date");
-const city = document.getElementById("city-name");
-const weatherDescri = document.getElementById("weather-description");
+const weatherContainer = document.getElementById("weather-container")
 const weatherIcon = document.getElementById("weather-icon");
 const currentTemp = document.getElementById("current-temp");
 const feelsLike = document.getElementById("feelslike-temp");
 const hiTemp = document.getElementById("hi-temp");
 const lowTemp = document.getElementById("low-temp");
-const convertToF = document.getElementById("convertToF");
-const convertToC = document.getElementById("convertToC");
 const celcius = document.querySelectorAll(".hide-celcius");
 const fahrenheit = document.querySelectorAll(".hide-fahrenheit");
-
-let testTime = new Date().getTime();
-console.log(testTime);
-
+// time with milliseconds at where you now are 
+let currentTimeHere = new Date().getTime();
 // For 2 min function
 let cityValue;
-
 // Declaration for building current local time
-let now, currentLocalTime, getTimeEverySecond, defaultTimeZone;
+let now, currentLocalTime, getTimeEverySecond, timeZone;
 
 // function for when you search a city
 const getResults = (city) => {
@@ -70,8 +62,7 @@ const dateBuilder = () => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     
-    now = moment(testTime).utc().add(currentLocalTime);
-    // console.log(now);
+    now = moment(currentTimeHere).utc().add(currentLocalTime);
 
     // currentLocalTime... milliseconds
     let day = days[now.get("day")];
@@ -79,12 +70,12 @@ const dateBuilder = () => {
     let month = months[now.get("month")];
     let year = now.get("year");
     let hour = makeDigitDouble(now.get("hour"));
-    // console.log(hour);
     let time = makeDigitDouble(now.get("minute"));
     let second = makeDigitDouble(now.get("second"));
 
-    realTimeDate.textContent = `${day}, ${month} ${date}, ${year} ${hour}:${time}:${second}`;
-    testTime = testTime + 1000;
+    document.getElementById("date").textContent = 
+    `${day}, ${month} ${date}, ${year} ${hour}:${time}:${second}`;
+    currentTimeHere = currentTimeHere + 1000;
 
 };
 
@@ -98,8 +89,8 @@ const makeDigitDouble = (num) => {
 const createElements = (cityData) => {
     let iconCode = cityData.weather[0].icon;
     let iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png";
-    city.textContent = `${cityData.name}, ${cityData.sys.country}`;
-    weatherDescri.innerHTML = cityData.weather[0].main;
+    document.getElementById("city-name").textContent = `${cityData.name}, ${cityData.sys.country}`;
+    document.getElementById("weather-description").innerHTML = cityData.weather[0].main;
     weatherIcon.innerHTML = `<img class="icon-image" src="${iconUrl}" alt=""></img>`;
     
     // When users prefer to have fahrenheit and keep it even after they search for another city's forecast
@@ -112,12 +103,12 @@ const createElements = (cityData) => {
     });
 
     //Convert C to F
-    convertToF.addEventListener("click", () => {
+    document.getElementById("convertToF").addEventListener("click", () => {
         showTempFahrenheit(cityData);
     });
 
     // Convert F to C
-    convertToC.addEventListener("click", () => {
+    document.getElementById("convertToC").addEventListener("click", () => {
         fahrenheit.forEach((val) => {
             val.classList.add("hide-fahrenheit");
         });
@@ -151,7 +142,7 @@ const showTempCelcius = (cityData) => {
 }
 
 // when you search for a city and click the button
-window.searchCityBtn.addEventListener("click", () => {
+window.document.getElementById("searchCityBtn").addEventListener("click", () => {
         getAnotherCityInfo();
 });
 // OR, when press an enter key
@@ -174,31 +165,21 @@ const getAnotherCityInfo = async () => {
 // Function to execute dark mode
 toggleDarkmode = () => {
     document.body.classList.toggle("darkmode");
-    if (document.body.classList.contains("darkmode")) {
+    weatherContainer.classList.toggle("wContainerDarkmode");
+
+    if (document.body.classList.contains("darkmode") 
+    && weatherContainer.classList.contains("wContainerDarkmode")) {
         localStorage.setItem("darkmodeOn", "true");
     } else {
         localStorage.setItem("darkmodeOn", "false");
     }
 }
 
-
 // when you visit the page
 window.addEventListener("load", () => {
     if (localStorage.getItem("darkmodeOn") === "true") { // String
         document.body.classList.add("darkmode");
+        weatherContainer.classList.add("wContainerDarkmode");
        } 
     getResults("Vancouver")
-   
    });
-    
-
-// Storage dark mode
-// const storageDarkmode = () => {
-//     localStorage.setItem("darkmodeOn", true);
-//     if (localStorage.getItem("darkmodeOn") === 'true') {
-//         document.body.classList.add("darkmode");
-//     } 
-// }
-
-// storageDarkmode();
-

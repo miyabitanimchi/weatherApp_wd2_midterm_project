@@ -6,13 +6,16 @@ body {
     margin: 0;
     background-color: #FFF;
     /* background: url(./img/Rain-5s-1084px.png); */
-    color: #000;
+    color: #4d4d4d;
 }
 
 .darkmode {
     transition: 0.3s;
     background-color: #000;
-    color: white;
+}
+
+.wContainerDarkmode {
+    background: linear-gradient(319deg, rgba(255, 189, 119, 0.9) 0%, rgba(240, 244, 164, 0.9) 37%, rgba(172, 252, 217, 0.9) 100%);
 }
 
 #container {
@@ -25,7 +28,6 @@ header {
     flex-direction: row;
     padding: 50px;
 }
-
 #searchCity {
     width: 100%;
     max-width: 280px;
@@ -53,6 +55,11 @@ header {
     margin-left: 5px;
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
+}
+
+#searchCityBtn:hover {
+    transition: 0.3s;
+    background-color: #f2f2f2;
 }
 
 main {
@@ -109,6 +116,12 @@ main {
     display: none;
 }
 
+#convertToF, #convertToC {
+    cursor: pointer;
+    background: #fff;
+    border-radius: 5px;
+}
+
 #btn-container {
     display: flex;
     flex-direction: column;
@@ -117,6 +130,9 @@ main {
 
 #darkmodeBtn {
     margin-top: 20px;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 5px;
 }
 
 @media screen and (min-width: 650px) {
