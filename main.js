@@ -20,6 +20,9 @@ const convertToC = document.getElementById("convertToC");
 const celcius = document.querySelectorAll(".hide-celcius");
 const fahrenheit = document.querySelectorAll(".hide-fahrenheit");
 
+let testTime = new Date().getTime();
+console.log(testTime);
+
 // For 2 min function
 let cityValue;
 
@@ -35,11 +38,12 @@ const getResults = (city) => {
             return;
         }
         res.json().then((cityData) => {
-            defaultTimeZone = cityData.timezone;
-            // setInterval("createElements(cityData)", 1000);
-            currentLocalTime = (cityData.dt + cityData.timezone - (-28800)) * 1000;
+            timeZone = cityData.timezone;
+            console.log(timeZone);
 
-            //  止めないと前のやつが動きっぱなしになるから
+            currentLocalTime = timeZone * 1000;
+
+            //  Clear an previous interval
             getTimeEverySecond && clearInterval(getTimeEverySecond);
             // Update the information every one second (because of the second)
             getTimeEverySecond = setInterval(dateBuilder, 1000);
@@ -65,18 +69,23 @@ let everyTwoMinUpdate = setInterval(() => {
 const dateBuilder = () => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    
+    now = moment(testTime).utc().add(currentLocalTime);
+    // console.log(now);
 
-    now = new Date(currentLocalTime);
-    let day = days[now.getDay()];
-    let date = now.getDate();
-    let month = months[now.getMonth()];
-    let year = now.getFullYear();
-    let hour = makeDigitDouble(now.getHours());
-    let time = makeDigitDouble(now.getMinutes());
-    let second = makeDigitDouble(now.getSeconds());
+    // currentLocalTime... milliseconds
+    let day = days[now.get("day")];
+    let date = now.get("date");
+    let month = months[now.get("month")];
+    let year = now.get("year");
+    let hour = makeDigitDouble(now.get("hour"));
+    // console.log(hour);
+    let time = makeDigitDouble(now.get("minute"));
+    let second = makeDigitDouble(now.get("second"));
 
     realTimeDate.textContent = `${day}, ${month} ${date}, ${year} ${hour}:${time}:${second}`;
-    currentLocalTime = currentLocalTime + 1000;
+    testTime = testTime + 1000;
+
 };
 
 // function to put 0 for an hour and time when they are single digits
@@ -101,7 +110,7 @@ const createElements = (cityData) => {
             showTempCelcius(cityData);
         }
     });
-    
+
     //Convert C to F
     convertToF.addEventListener("click", () => {
         showTempFahrenheit(cityData);
