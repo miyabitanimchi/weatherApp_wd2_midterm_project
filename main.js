@@ -174,16 +174,22 @@ const getAnotherCityInfo = async () => {
 // Function to execute dark mode
 toggleDarkmode = () => {
     document.body.classList.toggle("darkmode");
-    localStorage.setItem("darkmodeOn", document.body.checked);
+    if (document.body.classList.contains("darkmode")) {
+        localStorage.setItem("darkmodeOn", "true");
+    } else {
+        localStorage.setItem("darkmodeOn", "false");
+    }
 }
+
 
 // when you visit the page
 window.addEventListener("load", () => {
+    if (localStorage.getItem("darkmodeOn") === "true") { // String
+        document.body.classList.add("darkmode");
+       } 
     getResults("Vancouver")
-    // if (localStorage.getItem("darkmodeOn")=== true) {
-    //     document.body.classList.add("darkmode");
-    // }
-    });
+   
+   });
     
 
 // Storage dark mode
