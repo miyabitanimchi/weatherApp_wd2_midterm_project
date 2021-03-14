@@ -62,6 +62,10 @@ header {
     background-color: #f2f2f2;
 }
 
+#searchCityBtn:active {
+    transform: translateY(2px);
+}
+
 main {
     display: flex;
     flex-direction: column;
@@ -97,15 +101,27 @@ main {
 
 #weather-description {
     font-weight: bold;
+    font-size: 1.4rem;
 }
 
 .icon-image {
-    height: 150px;
-    width: 150px;
+    height: 170px;
+    width: 170px;
 }
 
-#btn-container {
-    display: flex;
+#current-temp {
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+#hilow-temp {
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+.feelslike-container {
+    margin-top: 3px;
+    font-size: 1.1rem;
 }
 
 .hide-celcius {
@@ -116,13 +132,36 @@ main {
     display: none;
 }
 
-#convertToF, #convertToC {
+.fcBtn-container {
+    margin-top: 3px;
+}
+
+#convertToFBtn, #convertToCBtn {
     cursor: pointer;
     background: #fff;
     border-radius: 5px;
 }
 
-#btn-container {
+#convertToFBtn:hover {
+    transition: 0.3s;
+    background-color: #f2f2f2;
+}
+
+#convertToFBtn:active {
+    transform: translateY(2px);
+}
+
+#convertToCBtn:hover {
+    transition: 0.3s;
+    background-color: #f2f2f2;
+}
+
+#convertToCBtn:active {
+    transform: translateY(2px);
+}
+
+.btn-container {
+    margin-top: 3px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -135,16 +174,11 @@ main {
     border-radius: 5px;
 }
 
-@media screen and (min-width: 650px) {
-    #weather-container {
-        margin-right: 150px;
-        margin-left: 150px;
-    }
+#darkmodeBtn:hover {
+    transition: 0.3s;
+    background-color: #f2f2f2;
 }
 
-@media screen and (min-width: 1000px) {
-    #weather-container {
-        margin-right: 300px;
-        margin-left: 300px;
-    }
+#darkmodeBtn:active {
+    transform: translateY(2px);
 }

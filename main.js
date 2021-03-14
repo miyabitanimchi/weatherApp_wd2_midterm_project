@@ -14,32 +14,29 @@ const hiTemp = document.getElementById("hi-temp");
 const lowTemp = document.getElementById("low-temp");
 const celcius = document.querySelectorAll(".hide-celcius");
 const fahrenheit = document.querySelectorAll(".hide-fahrenheit");
-// time with milliseconds at where you now are 
-let currentTimeHere = new Date().getTime();
-// For 2 min function
-let cityValue;
-// Declaration for building current local time
-let now, currentLocalTime, getTimeEverySecond, timeZone;
 
-// function for when you search a city
-const getResults = (city) => {
-    fetch(`${api.base}weather?q=${city}&units=metric&appid=${api.key}`).then((res) => {
-        console.log(res);
-        if (res.status !== 200) {
+let currentTimeHere = new Date().getTime();  // get time with milliseconds at where you currently are 
+let cityValue;  // Global variable for 2 min function
+let now, currentLocalTimezone, getTimeEverySecond; // Global variables for building current local time
+
+// Function to fetch API and get the data of each city
+const fetchAPIAndGetDataOfEachCity = (cityName) => {
+    fetch(`${api.base}weather?q=${cityName}&units=metric&appid=${api.key}`).then((response) => {
+        console.log(response);
+        if (response.status !== 200) {
             alert(`Input a correct name of a city`);
             return;
         }
-        res.json().then((cityData) => {
-            timeZone = cityData.timezone;
-            console.log(timeZone);
+        response.json().then((cityData) => {
+            // The data of each timezone is seconds, so times 1000 to change it to miliseconds, 
+            // and assign it to the global variable "currentLocalTimezone"
+            currentLocalTimezone = (cityData.timezone) * 1000; 
 
-            currentLocalTime = timeZone * 1000;
-
-            //  Clear an previous interval
+            //  Clear a previous interval
             getTimeEverySecond && clearInterval(getTimeEverySecond);
             // Update the information every one second (because of the second)
-            getTimeEverySecond = setInterval(dateBuilder, 1000);
-            createElements(cityData);
+            getTimeEverySecond = setInterval(createDate, 1000);
+            createElementsAndShow(cityData);
             console.log(cityData);
 
         })
@@ -51,73 +48,69 @@ const getResults = (city) => {
 let everyTwoMinUpdate = setInterval(() => {
     cityValue = inputCity.value;
     if (cityValue === "") {
-        getResults("Vancouver");  // to try not to get the error 400 when the input box is empty
+        fetchAPIAndGetDataOfEachCity("Vancouver");  // to try not to get the error 400 when the input box is empty
     } else {
-        getResults(cityValue);
+        fetchAPIAndGetDataOfEachCity(cityValue);
     }
-}, 120000);
+}, 120000); // Fetch API every 2 mins
 
-// Get current date from "new Date()" and build a date to be shown
-const dateBuilder = () => {
+// Function to chenge time where you currently are, to current local time of a city submitted
+const createDate = () => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     
-    now = moment(currentTimeHere).utc().add(currentLocalTime);
+    now = moment(currentTimeHere).utc().add(currentLocalTimezone); // Method from moment JS.  currentLocalTimezone... milliseconds
 
-    // currentLocalTime... milliseconds
     let day = days[now.get("day")];
     let date = now.get("date");
     let month = months[now.get("month")];
     let year = now.get("year");
-    let hour = makeDigitDouble(now.get("hour"));
-    let time = makeDigitDouble(now.get("minute"));
-    let second = makeDigitDouble(now.get("second"));
+    let hour = add0WhenSingleDigits(now.get("hour"));
+    let time = add0WhenSingleDigits(now.get("minute"));
+    let second = add0WhenSingleDigits(now.get("second"));
 
     document.getElementById("date").textContent = 
     `${day}, ${month} ${date}, ${year} ${hour}:${time}:${second}`;
     currentTimeHere = currentTimeHere + 1000;
-
 };
 
-// function to put 0 for an hour and time when they are single digits
-const makeDigitDouble = (num) => {
+// Function to add 0 to single digits
+const add0WhenSingleDigits = (num) => {
     num += "";
     return (num.length === 1) ? num = "0" + num : num;
 };
 
-// Create elements to show them on html
-const createElements = (cityData) => {
+// Create elements and show them on the display
+const createElementsAndShow = (cityData) => {
     let iconCode = cityData.weather[0].icon;
     let iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png";
     document.getElementById("city-name").textContent = `${cityData.name}, ${cityData.sys.country}`;
     document.getElementById("weather-description").innerHTML = cityData.weather[0].main;
     weatherIcon.innerHTML = `<img class="icon-image" src="${iconUrl}" alt=""></img>`;
     
-    // When users prefer to have fahrenheit and keep it even after they search for another city's forecast
+    // For when users prefer to have fahrenheit and keep it even after they search for another city's forecast
     fahrenheit.forEach((val) => {
         if(!val.classList.contains("hide-fahrenheit")) {
-            showTempFahrenheit(cityData);
+            showTempWithF(cityData);
         } else {
-            showTempCelcius(cityData);
+            showTempWithC(cityData);
         }
     });
-
     //Convert C to F
-    document.getElementById("convertToF").addEventListener("click", () => {
-        showTempFahrenheit(cityData);
+    document.getElementById("convertToFBtn").addEventListener("click", () => {
+        showTempWithF(cityData);
     });
-
     // Convert F to C
-    document.getElementById("convertToC").addEventListener("click", () => {
+    document.getElementById("convertToCBtn").addEventListener("click", () => {
         fahrenheit.forEach((val) => {
             val.classList.add("hide-fahrenheit");
         });
-        showTempCelcius(cityData);
+        showTempWithC(cityData);
     });
 }
 
 // function to show temperature with fahrenheit
-const showTempFahrenheit = (cityData) => {
+const showTempWithF = (cityData) => {
     currentTemp.innerHTML = `${Math.round((cityData.main.temp) * 1.8 + 32)}`;
     hiTemp.innerHTML = `H: ${Math.round((cityData.main.temp_max) * 1.8 + 32)}`;
     lowTemp.innerHTML = `L: ${Math.round((cityData.main.temp_min) * 1.8 + 32)}`;
@@ -131,7 +124,7 @@ const showTempFahrenheit = (cityData) => {
 }
 
 // function to show temperature with celcius
-const showTempCelcius = (cityData) => {
+const showTempWithC = (cityData) => {
     currentTemp.innerHTML = `${Math.round(cityData.main.temp)}`;
     hiTemp.innerHTML = `H: ${Math.round(cityData.main.temp_max)}`;
     lowTemp.innerHTML = `L: ${Math.round(cityData.main.temp_min)}`;
@@ -152,13 +145,13 @@ inputCity.addEventListener("keypress", (event) => {
     } 
 });
 
-// function for the inside of the click and enter functions
+// Function to put in the inside of the click and enter functions above
 const getAnotherCityInfo = async () => {
     clearInterval(everyTwoMinUpdate);
     cityValue = inputCity.value;
-    await getResults(cityValue);
+    await fetchAPIAndGetDataOfEachCity(cityValue);
     everyTwoMinUpdate = setInterval(() => {
-        getResults(cityValue);
+        fetchAPIAndGetDataOfEachCity(cityValue);
     }, 120000);
 }
 
@@ -181,5 +174,5 @@ window.addEventListener("load", () => {
         document.body.classList.add("darkmode");
         weatherContainer.classList.add("wContainerDarkmode");
        } 
-    getResults("Vancouver")
+    fetchAPIAndGetDataOfEachCity("Vancouver")
    });
