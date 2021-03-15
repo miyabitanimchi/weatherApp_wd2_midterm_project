@@ -4,7 +4,7 @@ html {
 
 body {
     margin: 0;
-    background-color: #FFF;
+    background-color: whitesmoke;
     /* background: url(./img/Rain-5s-1084px.png); */
     color: #4d4d4d;
 }
@@ -14,7 +14,8 @@ body {
     background-color: #000;
 }
 
-.wContainerDarkmode {
+.weatherContainerDarkmode {
+    transition: 0.3s;
     background: linear-gradient(319deg, rgba(255, 189, 119, 0.9) 0%, rgba(240, 244, 164, 0.9) 37%, rgba(172, 252, 217, 0.9) 100%);
 }
 

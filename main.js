@@ -23,22 +23,19 @@ let now, currentLocalTimezone, getTimeEverySecond; // Global variables for build
 const fetchAPIAndGetDataOfEachCity = (cityName) => {
     fetch(`${api.base}weather?q=${cityName}&units=metric&appid=${api.key}`).then((response) => {
         console.log(response);
-        if (response.status !== 200) {
-            alert(`Input a correct name of a city`);
+        if (!response.ok) {
+            alert(`The city name you input was not found`);
             return;
         }
         response.json().then((cityData) => {
-            // The data of each timezone is seconds, so times 1000 to change it to miliseconds, 
-            // and assign it to the global variable "currentLocalTimezone"
-            currentLocalTimezone = (cityData.timezone) * 1000; 
-
-            //  Clear a previous interval
-            getTimeEverySecond && clearInterval(getTimeEverySecond);
-            // Update the information every one second (because of the second)
-            getTimeEverySecond = setInterval(createDate, 1000);
-            createElementsAndShow(cityData);
+           // Assign timezone to the global variable "currentLocalTimezone"
+            currentLocalTimezone = (cityData.timezone) * 1000; // Times 1000 to convert the timezome to milliseconds
+            // Clear the previous interval
+            getTimeEverySecond && clearInterval(getTimeEverySecond); // If the left one is true, it goes to the right
+            // The timer for a date gets executed
+            getTimeEverySecond = setInterval(getDateAndShow, 1000);
+            getForecastAndShow(cityData);
             console.log(cityData);
-
         })
     }).catch((err) => {
         console.log(`error ${err}`);
@@ -55,7 +52,7 @@ let everyTwoMinUpdate = setInterval(() => {
 }, 120000); // Fetch API every 2 mins
 
 // Function to chenge time where you currently are, to current local time of a city submitted
-const createDate = () => {
+const getDateAndShow = () => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     
@@ -71,7 +68,7 @@ const createDate = () => {
 
     document.getElementById("date").textContent = 
     `${day}, ${month} ${date}, ${year} ${hour}:${time}:${second}`;
-    currentTimeHere = currentTimeHere + 1000;
+    currentTimeHere = currentTimeHere + 1000; // Timer... add one second each interval
 };
 
 // Function to add 0 to single digits
@@ -80,20 +77,20 @@ const add0WhenSingleDigits = (num) => {
     return (num.length === 1) ? num = "0" + num : num;
 };
 
-// Create elements and show them on the display
-const createElementsAndShow = (cityData) => {
+// Function to elements and show them on the display
+const getForecastAndShow = (cityData) => {
     let iconCode = cityData.weather[0].icon;
     let iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png";
     document.getElementById("city-name").textContent = `${cityData.name}, ${cityData.sys.country}`;
-    document.getElementById("weather-description").innerHTML = cityData.weather[0].main;
+    document.getElementById("weather-description").textContent = cityData.weather[0].main;
     weatherIcon.innerHTML = `<img class="icon-image" src="${iconUrl}" alt=""></img>`;
-    
+   
     // For when users prefer to have fahrenheit and keep it even after they search for another city's forecast
     fahrenheit.forEach((val) => {
-        if(!val.classList.contains("hide-fahrenheit")) {
-            showTempWithF(cityData);
+        if(!val.classList.contains("hide-fahrenheit")) { // = If F was shown already
+            showTempWithF(cityData); // Show fahrenheit   
         } else {
-            showTempWithC(cityData);
+            showTempWithC(cityData); // Show celcius
         }
     });
     //Convert C to F
@@ -102,77 +99,93 @@ const createElementsAndShow = (cityData) => {
     });
     // Convert F to C
     document.getElementById("convertToCBtn").addEventListener("click", () => {
-        fahrenheit.forEach((val) => {
-            val.classList.add("hide-fahrenheit");
-        });
         showTempWithC(cityData);
     });
 }
 
 // function to show temperature with fahrenheit
 const showTempWithF = (cityData) => {
-    currentTemp.innerHTML = `${Math.round((cityData.main.temp) * 1.8 + 32)}`;
-    hiTemp.innerHTML = `H: ${Math.round((cityData.main.temp_max) * 1.8 + 32)}`;
-    lowTemp.innerHTML = `L: ${Math.round((cityData.main.temp_min) * 1.8 + 32)}`;
-    feelsLike.innerHTML = `${Math.round((cityData.main.feels_like) * 1.8 + 32)}`;
+    currentTemp.textContent = `${Math.round((cityData.main.temp) * 1.8 + 32)}`;
+    hiTemp.textContent = `H: ${Math.round((cityData.main.temp_max) * 1.8 + 32)}`;
+    lowTemp.textContent = `L: ${Math.round((cityData.main.temp_min) * 1.8 + 32)}`;
+    feelsLike.textContent = `${Math.round((cityData.main.feels_like) * 1.8 + 32)}`;
     celcius.forEach((val) => {
-        val.classList.add("hide-celcius");
+        val.classList.add("hide-celcius"); // C will be hidden
     });
     fahrenheit.forEach((val) => {
-        val.classList.remove("hide-fahrenheit");
+        val.classList.remove("hide-fahrenheit"); // F will be shown 
+        localStorage.setItem("keepF", "true"); // Add the key "keppF" in a storage with the value true
     });
 }
 
 // function to show temperature with celcius
 const showTempWithC = (cityData) => {
-    currentTemp.innerHTML = `${Math.round(cityData.main.temp)}`;
-    hiTemp.innerHTML = `H: ${Math.round(cityData.main.temp_max)}`;
-    lowTemp.innerHTML = `L: ${Math.round(cityData.main.temp_min)}`;
-    feelsLike.innerHTML = `${Math.round(cityData.main.feels_like)}`;
+    currentTemp.textContent = `${Math.round(cityData.main.temp)}`;
+    hiTemp.textContent = `H: ${Math.round(cityData.main.temp_max)}`;
+    lowTemp.textContent = `L: ${Math.round(cityData.main.temp_min)}`;
+    feelsLike.textContent = `${Math.round(cityData.main.feels_like)}`;
     celcius.forEach((val) => {
-        val.classList.remove("hide-celcius");
-    })
+        val.classList.remove("hide-celcius"); // C will be shown
+        localStorage.setItem("keepF", "false"); // Add the key "keppF" in a storage with the value false
+    });
+    fahrenheit.forEach((val) => {
+        val.classList.add("hide-fahrenheit");
+    });
 }
-
-// when you search for a city and click the button
-window.document.getElementById("searchCityBtn").addEventListener("click", () => {
-        getAnotherCityInfo();
-});
-// OR, when press an enter key
-inputCity.addEventListener("keypress", (event) => {
-    if (event.keyCode == 13) {
-        getAnotherCityInfo();
-    } 
-});
-
-// Function to put in the inside of the click and enter functions above
-const getAnotherCityInfo = async () => {
-    clearInterval(everyTwoMinUpdate);
-    cityValue = inputCity.value;
-    await fetchAPIAndGetDataOfEachCity(cityValue);
-    everyTwoMinUpdate = setInterval(() => {
-        fetchAPIAndGetDataOfEachCity(cityValue);
-    }, 120000);
-}
-
-// Function to execute dark mode
-toggleDarkmode = () => {
+// Function to execute the dark mode ...onclick
+const toggleDarkmode = () => {
     document.body.classList.toggle("darkmode");
-    weatherContainer.classList.toggle("wContainerDarkmode");
+    weatherContainer.classList.toggle("weatherContainerDarkmode");
 
     if (document.body.classList.contains("darkmode") 
-    && weatherContainer.classList.contains("wContainerDarkmode")) {
-        localStorage.setItem("darkmodeOn", "true");
+    && weatherContainer.classList.contains("weatherContainerDarkmode")) {
+        localStorage.setItem("darkmodeOn", "true"); 
+        // localStorage.setItem(keyname, value) ...Both have to be strings
     } else {
         localStorage.setItem("darkmodeOn", "false");
     }
 }
-
 // when you visit the page
 window.addEventListener("load", () => {
-    if (localStorage.getItem("darkmodeOn") === "true") { // String
-        document.body.classList.add("darkmode");
-        weatherContainer.classList.add("wContainerDarkmode");
+    // Conditional for when the dark mode was on
+    if (localStorage.getItem("darkmodeOn") === "true") { // getItem(keyname) ...Has to be a string
+        document.body.classList.add("darkmode"); 
+        weatherContainer.classList.add("weatherContainerDarkmode");
        } 
+    // Conditional for when farrenheit was chosen
+    if (localStorage.getItem("keepF") === "true") {
+        celcius.forEach((val) => {
+            val.classList.add("hide-celcius");
+        });
+        fahrenheit.forEach((val) => {
+            val.classList.remove("hide-fahrenheit");
+        });
+    }
     fetchAPIAndGetDataOfEachCity("Vancouver")
-   });
+});
+
+// when you search for a city and click the button
+window.document.getElementById("searchCityBtn").addEventListener("click", () => {
+    getAnotherCityInfo();
+});
+
+// OR, when press an enter key
+inputCity.addEventListener("keypress", (event) => {
+if (event.keyCode == 13) {
+    getAnotherCityInfo();
+} 
+});
+
+// Function to put in the inside of the click and enter addEventListeners above
+const getAnotherCityInfo = () => {
+    clearInterval(everyTwoMinUpdate);
+    cityValue = inputCity.value;
+    if (cityValue === "") {
+        fetchAPIAndGetDataOfEachCity("Vancouver");
+    } else {
+        fetchAPIAndGetDataOfEachCity(cityValue);
+    }
+    everyTwoMinUpdate = setInterval(() => {
+        fetchAPIAndGetDataOfEachCity(cityValue);
+    }, 120000);
+}
