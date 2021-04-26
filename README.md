@@ -7,11 +7,11 @@
 </p>
 
 ## Introduction
-This is a weather app using API from [OpenWeatherMap](https://openweathermap.org/). 
+This is a weather app using API from [OpenWeatherMap](https://openweathermap.org/). <br/>
 The weather in cities around the world is able to be shown with its local time. The page updates the data automatically every 2 minutes. 
 This is a training project to learn how to get data with fetch API, work with the time differences, and save data in the local storage.
 
-##Built with:
+## Built with:
 • JS <br/>
 • HTML <br/>
 • CSS <br/>
