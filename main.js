@@ -49,6 +49,7 @@ let everyTwoMinUpdate = setInterval(() => {
     } else {
         fetchAPIAndGetDataOfEachCity(cityValue);
     }
+    console.log(Date()); // Just to show it updates every 2 mins
 }, 120000); // Fetch API every 2 mins
 
 // Function to chenge time where you currently are, to current local time of a city submitted
