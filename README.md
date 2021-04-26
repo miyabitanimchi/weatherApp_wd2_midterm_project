@@ -20,8 +20,8 @@ This is a training project to learn how to get data with fetch API, work with th
 • Moment.js
 
 ## Features
-• It updates the data every 2 mins
-• Celsius / Fahrenheit converter
-• Dark mode
-• store user's preferences in the local storage (°C / °F converter and dark mode)
+• It updates the data every 2 mins <br/>
+• Celsius / Fahrenheit converter <br/>
+• Dark mode <br/>
+• store user's preferences in the local storage (°C / °F converter and dark mode) <br/>
 • A default city is Vancouver
