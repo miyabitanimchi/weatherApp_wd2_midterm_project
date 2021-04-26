@@ -23,5 +23,5 @@ This is a training project to learn how to get data with fetch API, work with th
 • It updates the data every 2 mins <br/>
 • Celsius / Fahrenheit converter <br/>
 • Dark mode <br/>
-• store user's preferences in the local storage (°C / °F converter and dark mode) <br/>
+• Store user's preferences in the local storage (°C / °F converter and dark mode) <br/>
 • A default city is Vancouver
